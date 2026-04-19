@@ -35,7 +35,7 @@ export function ScrollExpansionHero({
   textBlend = false,
   children,
 }: ScrollExpansionHeroProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotion() ?? false;
   const [progress, setProgress] = useState(reduceMotion ? 1 : 0);
   const [isComplete, setIsComplete] = useState(reduceMotion);
   const touchStart = useRef<number | null>(null);
@@ -110,7 +110,7 @@ export function ScrollExpansionHero({
             poster={bgPosterSrc}
             className="absolute inset-0 h-full w-full object-cover"
           >
-            <source src={bgImageSrc} />
+            <source src={bgImageSrc} type="video/mp4" />
           </video>
         ) : (
           <div
@@ -146,7 +146,7 @@ export function ScrollExpansionHero({
                   poster={posterSrc}
                   className="h-full w-full object-cover"
                 >
-                  <source src={mediaSrc} />
+                  <source src={mediaSrc} type="video/mp4" />
                 </video>
               ) : (
                 <div

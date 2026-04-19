@@ -22,7 +22,7 @@ export function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
           poster={caseStudy.posterImage}
           className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
         >
-          <source src={caseStudy.coverImage} />
+          <source src={caseStudy.coverImage} type="video/mp4" />
         </video>
       ) : (
         <div

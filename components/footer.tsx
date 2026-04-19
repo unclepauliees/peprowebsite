@@ -12,15 +12,11 @@ export function Footer() {
           </p>
         </div>
         <div className="flex flex-wrap gap-5 text-sm text-white/52">
-          <Link href="/work" className="hover:text-white">
-            Work
-          </Link>
-          <Link href="/thinking" className="hover:text-white">
-            Thinking
-          </Link>
-          <Link href="/contact" className="hover:text-white">
-            Contact
-          </Link>
+          <Link href="/work" className="hover:text-white">Work</Link>
+          <Link href="/thinking" className="hover:text-white">Thinking</Link>
+          <Link href="/built" className="hover:text-white">Built</Link>
+          <Link href="/about" className="hover:text-white">About</Link>
+          <Link href="/contact" className="hover:text-white">Contact</Link>
         </div>
       </div>
     </footer>

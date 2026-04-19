@@ -38,14 +38,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
     notFound();
   }
 
-  const mediaType =
-    slug === "ipx" ? "video" : (caseStudy.mediaType ?? "image");
-  const mediaSrc = slug === "ipx" ? "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/ipx-new-v2.mp4" : caseStudy.coverImage;
-  const posterSrc =
-    slug === "ipx"
-      ? (caseStudy.posterImage ??
-        "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=80")
-      : caseStudy.posterImage;
+  const mediaType = caseStudy.mediaType ?? "image";
+  const mediaSrc = caseStudy.coverImage;
+  const posterSrc = caseStudy.posterImage;
 
   return (
     <Layout>
