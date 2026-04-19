@@ -60,10 +60,10 @@ export function ScrollExpansionHero({
     });
   };
 
-  // Attach wheel + touch listeners as { passive: false } so preventDefault works
+  // Attach wheel + touch listeners as { passive: false } so preventDefault works.
+  // Must be on window (not the section) so events from fixed/overlay elements are caught too.
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el || reduceMotion) return;
+    if (reduceMotion) return;
 
     const onWheel = (e: WheelEvent) => {
       if (stateRef.current.isComplete) return;
@@ -87,18 +87,18 @@ export function ScrollExpansionHero({
 
     const onTouchEnd = () => { touchStart.current = null; };
 
-    el.addEventListener("wheel", onWheel, { passive: false });
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchmove", onTouchMove, { passive: false });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
-      el.removeEventListener("wheel", onWheel);
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
     };
-  }, [reduceMotion]); // only re-attach if reduceMotion changes
+  }, [reduceMotion]);
 
   const mediaScale = useMemo(() => 0.72 + progress * 0.28, [progress]);
   const mediaHeight = useMemo(() => 52 + progress * 36, [progress]);
