@@ -25,9 +25,17 @@ jobs:
       - run: npm run build
 
       - name: Deploy to deploy branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
-          publish_branch: deploy
-          force_orphan: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd out
+          git init
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          git lfs install
+          git lfs track "*.mp4" "*.mov" "*.webm"
+          git add .gitattributes
+          git add .
+          git commit -m "Deploy"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/unclepauliees/peprowebsite.git"
+          git push --force origin HEAD:deploy
