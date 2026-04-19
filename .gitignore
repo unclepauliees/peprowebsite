@@ -1,0 +1,18 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# iCloud / macOS temp files
+Icon?
+._*
+
+# Editor folders
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
