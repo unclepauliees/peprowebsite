@@ -99,8 +99,8 @@ export const caseStudies: CaseStudy[] = [
     ],
     mediaType: "video",
     coverImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/cbd-water-revised.mp4",
-    posterImage: "/media/cbd-water-life-enhanced-1.png",
-    backgroundImage: "/media/cbd-water-life-enhanced-1.png",
+    posterImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/cbd-water-boat.png",
+    backgroundImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/cbd-water-boat.png",
   },
   {
     slug: "agency-ecosystem",
