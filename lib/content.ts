@@ -72,8 +72,8 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "cbd-water",
-    title: "CBD Water",
-    client: "CBD Water",
+    title: "Cannabinoid Water",
+    client: "Cannabinoid Water",
     meta: "CPG / Wellness / Cultural Brand Strategy",
     kicker:
       "Building a beverage brand that could operate credibly in both lifestyle and retail environments.",
@@ -194,7 +194,7 @@ export const ventures: Venture[] = [
   },
   {
     slug: "cbd-water",
-    name: "CBD Water",
+    name: "Cannabinoid Water",
     category: "Consumer Venture",
     description:
       "A wellness-forward beverage platform shaped to balance lifestyle desire, retail readiness, and long-term brand equity.",
