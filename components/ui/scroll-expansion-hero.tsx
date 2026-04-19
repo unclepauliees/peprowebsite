@@ -39,31 +39,66 @@ export function ScrollExpansionHero({
   const [progress, setProgress] = useState(reduceMotion ? 1 : 0);
   const [isComplete, setIsComplete] = useState(reduceMotion);
   const touchStart = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Keep a ref so event handlers always see the latest values without re-attaching
+  const stateRef = useRef({ isComplete, reduceMotion, progress });
+  stateRef.current = { isComplete, reduceMotion, progress };
 
   useEffect(() => {
-    if (reduceMotion) {
-      return;
-    }
-
+    if (reduceMotion) return;
     document.body.style.overflow = isComplete ? "" : "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [isComplete, reduceMotion]);
 
   const applyDelta = (delta: number) => {
-    if (reduceMotion || isComplete) {
-      return;
-    }
-
+    if (stateRef.current.reduceMotion || stateRef.current.isComplete) return;
     setProgress((current) => {
       const next = clamp(current + delta, 0, 1);
-      if (next >= 1) {
-        setIsComplete(true);
-      }
+      if (next >= 1) setIsComplete(true);
       return next;
     });
   };
+
+  // Attach wheel + touch listeners as { passive: false } so preventDefault works
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || reduceMotion) return;
+
+    const onWheel = (e: WheelEvent) => {
+      if (stateRef.current.isComplete) return;
+      e.preventDefault();
+      applyDelta(Math.abs(e.deltaY) * 0.0016);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStart.current = e.touches[0]?.clientY ?? null;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (stateRef.current.isComplete || touchStart.current === null) return;
+      const current = e.touches[0]?.clientY ?? touchStart.current;
+      const delta = touchStart.current - current;
+      if (Math.abs(delta) < 4) return;
+      e.preventDefault();
+      applyDelta(Math.abs(delta) * 0.006);
+      touchStart.current = current;
+    };
+
+    const onTouchEnd = () => { touchStart.current = null; };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [reduceMotion]); // only re-attach if reduceMotion changes
 
   const mediaScale = useMemo(() => 0.72 + progress * 0.28, [progress]);
   const mediaHeight = useMemo(() => 52 + progress * 36, [progress]);
@@ -71,35 +106,7 @@ export function ScrollExpansionHero({
   const panelY = useMemo(() => 42 - progress * 42, [progress]);
 
   return (
-    <section
-      className="relative min-h-[220svh]"
-      onWheel={(event) => {
-        if (isComplete) {
-          return;
-        }
-        event.preventDefault();
-        applyDelta(Math.abs(event.deltaY) * 0.0016);
-      }}
-      onTouchStart={(event) => {
-        touchStart.current = event.touches[0]?.clientY ?? null;
-      }}
-      onTouchMove={(event) => {
-        if (isComplete || touchStart.current === null) {
-          return;
-        }
-        const current = event.touches[0]?.clientY ?? touchStart.current;
-        const delta = touchStart.current - current;
-        if (Math.abs(delta) < 4) {
-          return;
-        }
-        event.preventDefault();
-        applyDelta(Math.abs(delta) * 0.006);
-        touchStart.current = current;
-      }}
-      onTouchEnd={() => {
-        touchStart.current = null;
-      }}
-    >
+    <section ref={sectionRef} className="relative min-h-[220svh]">
       <div className="sticky top-0 h-svh overflow-hidden">
         {bgMediaType === "video" ? (
           <video
