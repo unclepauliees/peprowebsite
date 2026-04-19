@@ -32,9 +32,6 @@ jobs:
           git init
           git config user.email "github-actions@github.com"
           git config user.name "GitHub Actions"
-          git lfs install
-          git lfs track "*.mp4" "*.mov" "*.webm"
-          git add .gitattributes
           git add .
           git commit -m "Deploy"
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/unclepauliees/peprowebsite.git"
