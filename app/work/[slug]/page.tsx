@@ -40,7 +40,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   const mediaType =
     slug === "ipx" ? "video" : (caseStudy.mediaType ?? "image");
-  const mediaSrc = slug === "ipx" ? "/media/ipx-new-v2.mp4" : caseStudy.coverImage;
+  const mediaSrc = slug === "ipx" ? "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/ipx-new-v2.mp4" : caseStudy.coverImage;
   const posterSrc =
     slug === "ipx"
       ? (caseStudy.posterImage ??

@@ -64,7 +64,7 @@ export const caseStudies: CaseStudy[] = [
       "Supported a more credible foundation for capital, advisory, and strategic expansion.",
     ],
     mediaType: "video",
-    coverImage: "/media/ipx-new-v2.mp4",
+    coverImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/ipx-new-v2.mp4",
     posterImage:
       "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=80",
     backgroundImage:
@@ -98,7 +98,7 @@ export const caseStudies: CaseStudy[] = [
       "Created a more scalable framework for future product extensions.",
     ],
     mediaType: "video",
-    coverImage: "/media/cbd-water-revised.mp4",
+    coverImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/cbd-water-revised.mp4",
     posterImage: "/media/cbd-water-life-enhanced-1.png",
     backgroundImage: "/media/cbd-water-life-enhanced-1.png",
   },
@@ -130,7 +130,7 @@ export const caseStudies: CaseStudy[] = [
       "Created a stronger foundation for scalable collaboration and expansion.",
     ],
     mediaType: "video",
-    coverImage: "/media/agency-ecosystem-reel.mp4",
+    coverImage: "https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/agency-ecosystem-reel.mp4",
     posterImage:
       "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1600&q=80",
     backgroundImage:

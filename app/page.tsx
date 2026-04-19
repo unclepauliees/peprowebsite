@@ -16,9 +16,9 @@ export default function HomePage() {
     <Layout>
       <ScrollExpansionHero
         mediaType="video"
-        mediaSrc="/media/untitled-design.mp4"
+        mediaSrc="https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/untitled-design.mp4"
         posterSrc="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80"
-        bgImageSrc="/media/pepsi-hbcu-short.mp4"
+        bgImageSrc="https://github.com/unclepauliees/peprowebsite/releases/download/v1.0-media/pepsi-hbcu-short.mp4"
         bgMediaType="video"
         bgPosterSrc="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=80"
         title="Building brands with operator discipline and cultural leverage."
