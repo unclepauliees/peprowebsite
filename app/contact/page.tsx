@@ -17,12 +17,19 @@ export default function ContactPage() {
     const form = e.currentTarget;
     const data = new FormData(form);
     try {
-      const res = await fetch("https://formspree.io/estevez.justin.paul@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/estevez.justin.paul@gmail.com", {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+          _subject: "New message from paulestevez.pro",
+          _captcha: "false",
+        }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.success === "true") {
         setStatus("sent");
         form.reset();
       } else {
