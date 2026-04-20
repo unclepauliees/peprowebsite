@@ -186,7 +186,7 @@ export function ScrollExpansionHero({
               >
                 {date}
               </p>
-              <h1 className="max-w-4xl font-serif text-[1.75rem] leading-[1.1] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
+              <h1 className="max-w-4xl font-serif text-[2.36rem] leading-[1.1] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
                 {title}
               </h1>
             </div>
