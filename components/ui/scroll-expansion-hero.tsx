@@ -171,7 +171,7 @@ export function ScrollExpansionHero({
           {/* ↓ pt-10 on mobile pushes text inside card edge */}
           <div
             className={cn(
-              "relative z-10 max-w-5xl pt-10 sm:pt-12 lg:pl-10 lg:pt-16",
+              "relative z-10 max-w-5xl pt-10 pl-6 pr-5 sm:pl-0 sm:pr-0 sm:pt-12 lg:pl-10 lg:pt-16",
               textBlend ? "mix-blend-screen" : "",
             )}
           >
@@ -186,8 +186,7 @@ export function ScrollExpansionHero({
               >
                 {date}
               </p>
-              {/* ↓ text-5xl matches Positioning section heading size on mobile */}
-              <h1 className="max-w-4xl font-serif text-5xl leading-[1.05] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
+              <h1 className="max-w-4xl font-serif text-[1.75rem] leading-[1.1] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
                 {title}
               </h1>
             </div>
