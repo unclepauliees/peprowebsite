@@ -133,8 +133,8 @@ export function ScrollExpansionHero({
           transition={{ duration: 0.35, ease: "easeOut" }}
         />
 
-        {/* ↓ pt-20 on mobile (was pt-28), restores to sm:pt-28 on tablet+ */}
-        <div className="container-shell relative flex h-full flex-col justify-between pb-10 pt-20 sm:pt-28 sm:pb-14">
+        {/* ↓ pt-28 restored — card anchor stays consistent */}
+        <div className="container-shell relative flex h-full flex-col justify-between pb-10 pt-28 sm:pb-14">
           <div className="absolute inset-x-5 top-28 bottom-[24svh] sm:inset-x-8 lg:inset-x-12">
             <motion.div
               className="gradient-border relative h-full overflow-hidden rounded-[2.4rem] bg-black"
@@ -168,16 +168,14 @@ export function ScrollExpansionHero({
             </motion.div>
           </div>
 
-          {/* ↓ pt-4 on mobile (was pt-8), restores to sm:pt-12 on tablet+ */}
+          {/* ↓ pt-10 on mobile pushes text inside card edge */}
           <div
             className={cn(
-              "relative z-10 max-w-5xl pt-4 sm:pt-12 lg:pl-10 lg:pt-16",
+              "relative z-10 max-w-5xl pt-10 sm:pt-12 lg:pl-10 lg:pt-16",
               textBlend ? "mix-blend-screen" : "",
             )}
           >
-            {/* ↓ space-y-3 on mobile (was space-y-5), restores to sm:space-y-5 on tablet+ */}
             <div className="max-w-4xl space-y-3 sm:space-y-5 text-left">
-              {/* ↓ tracking-[0.12em] on mobile (was 0.28em), restores to sm:tracking-[0.28em] */}
               <p
                 className="pl-1 text-xs uppercase tracking-[0.12em] sm:tracking-[0.28em] mix-blend-normal"
                 style={{
@@ -188,8 +186,8 @@ export function ScrollExpansionHero({
               >
                 {date}
               </p>
-              {/* ↓ text-[2rem] on mobile (was 3.2rem), leading-[1.05] (was 0.94) */}
-              <h1 className="max-w-4xl font-serif text-[2rem] leading-[1.05] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
+              {/* ↓ clamp() fluidly scales H1 with viewport width across all phone sizes */}
+              <h1 className="max-w-4xl font-serif text-[clamp(1.35rem,6vw,2rem)] leading-[1.08] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
                 {title}
               </h1>
             </div>
