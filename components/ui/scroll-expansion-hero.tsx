@@ -186,8 +186,8 @@ export function ScrollExpansionHero({
               >
                 {date}
               </p>
-              {/* ↓ clamp() fluidly scales H1 with viewport width across all phone sizes */}
-              <h1 className="max-w-4xl font-serif text-[clamp(1.35rem,6vw,2rem)] leading-[1.08] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
+              {/* ↓ text-5xl matches Positioning section heading size on mobile */}
+              <h1 className="max-w-4xl font-serif text-5xl leading-[1.05] text-white sm:text-[4.8rem] sm:leading-[0.94] lg:text-[7rem]">
                 {title}
               </h1>
             </div>
