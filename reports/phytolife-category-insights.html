@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="PhytoLife Consumer Labs — Category Insights Report 2025–2026. Institutional-grade market analysis for functional beverage platform.">
+<title>PhytoLife Consumer Labs — Category Insights 2025–2026</title>
+
+<!-- Fonts: Fraunces (display) + DM Sans (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+
+<!-- Charts: Chart.js 4 + D3 v7 + TopoJSON client -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+
+<style>
+/* ───────────────────────────────────────────────
+   DESIGN TOKENS
+─────────────────────────────────────────────── */
+:root {
+  --bg:            #0D0D0D;
+  --bg2:           #131313;
+  --bg-card:       #191919;
+  --bg-card2:      #1E1E1E;
+  --text:          #F0EDE6;
+  --text2:         #B8B2AB;
+  --muted:         #6B6560;
+  --green:         #4A7C59;
+  --green-l:       #5E9B71;
+  --amber:         #C9963A;
+  --amber-l:       #DEB96A;
+  --blue:          #3A5F7D;
+  --blue-l:        #5080A0;
+  --border:        rgba(240,237,230,0.07);
+  --border2:       rgba(240,237,230,0.14);
+  --sidebar-w:     230px;
+  --ff-display:    'Fraunces', Georgia, serif;
+  --ff-body:       'DM Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* ───────────────────────────────────────────────
+   RESET
+─────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--ff-body);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+a { color:inherit; text-decoration:none; }
+strong { font-weight:600; }
+canvas { display:block; }
+
+/* ───────────────────────────────────────────────
+   PROGRESS BAR
+─────────────────────────────────────────────── */
+#progress-bar {
+  position:fixed;
+  top:0; left:0;
+  height:2px;
+  width:0%;
+  background:linear-gradient(90deg, var(--green), var(--amber), var(--blue));
+  z-index:9999;
+  transition:width 0.08s linear;
+}
+
+/* ───────────────────────────────────────────────
+   GRAIN OVERLAY
+─────────────────────────────────────────────── */
+.grain {
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:9998;
+  opacity:0.022;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+  background-size:256px;
+}
+
+/* ───────────────────────────────────────────────
+   LAYOUT: SIDEBAR
+─────────────────────────────────────────────── */
+#sidebar {
+  position:fixed; left:0; top:0;
+  height:100vh; width:var(--sidebar-w);
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  padding:2.5rem 1.75rem;
+  z-index:500;
+  display:flex; flex-direction:column; gap:1.5rem;
+  overflow-y:auto;
+}
+.back-link {
+  display:inline-flex; align-items:center; gap:0.45rem;
+  font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--muted);
+  text-decoration:none;
+  transition:color .2s;
+  padding-bottom:1.25rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:0.25rem;
+  width:100%;
+}
+.back-link:hover { color:var(--text2); }
+.back-link svg { flex-shrink:0; transition:transform .2s; }
+.back-link:hover svg { transform:translateX(-2px); }
+.tn-back {
+  display:inline-flex; align-items:center; gap:0.3rem;
+  padding:0.28rem 0.6rem 0.28rem 0.4rem;
+  border-radius:100px; border:1px solid var(--border2);
+  font-size:0.62rem; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--muted); text-decoration:none; white-space:nowrap;
+  transition:color .2s, border-color .2s;
+  flex-shrink:0;
+}
+.tn-back:hover { color:var(--text2); border-color:rgba(240,237,230,0.25); }
+.sb-brand {
+  font-family:var(--ff-display);
+  font-size:0.88rem; font-weight:600;
+  color:var(--text); line-height:1.35;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--border);
+}
+.sb-brand span {
+  display:block;
+  font-family:var(--ff-body);
+  font-size:0.6rem; font-weight:400;
+  letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.4rem;
+}
+.sb-nav { list-style:none; flex:1; display:flex; flex-direction:column; gap:0.1rem; }
+.nav-link {
+  display:block;
+  padding:0.42rem 0.75rem;
+  margin-left:-0.75rem;
+  color:var(--muted);
+  font-size:0.7rem; letter-spacing:0.07em; text-transform:uppercase;
+  transition:color .2s, border-left-color .2s;
+  border-left:2px solid transparent;
+  line-height:1.3;
+}
+.nav-link:hover { color:var(--text2); }
+.nav-link.active { color:var(--text); border-left-color:var(--amber); }
+.sb-foot {
+  font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--muted); padding-top:1.5rem;
+  border-top:1px solid var(--border);
+}
+
+/* ───────────────────────────────────────────────
+   LAYOUT: MOBILE TOP NAV
+─────────────────────────────────────────────── */
+#topnav {
+  display:none;
+  position:sticky; top:0;
+  background:rgba(13,13,13,0.94);
+  backdrop-filter:blur(12px);
+  z-index:500;
+  padding:0.7rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  align-items:center; gap:0.5rem;
+  overflow-x:auto; white-space:nowrap;
+}
+.tn-brand {
+  font-family:var(--ff-display);
+  font-size:0.78rem; font-weight:600;
+  color:var(--text); margin-right:0.75rem;
+}
+.tn-link {
+  display:inline-block;
+  padding:0.28rem 0.6rem;
+  border-radius:100px; border:1px solid transparent;
+  font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--muted);
+  transition:background .2s, color .2s;
+}
+.tn-link:hover { color:var(--text2); }
+.tn-link.active {
+  color:var(--text);
+  background:rgba(201,150,58,0.12);
+  border-color:rgba(201,150,58,0.3);
+}
+
+/* ───────────────────────────────────────────────
+   MAIN CONTENT OFFSET
+─────────────────────────────────────────────── */
+main { margin-left:var(--sidebar-w); }
+
+/* ───────────────────────────────────────────────
+   SECTIONS
+─────────────────────────────────────────────── */
+section {
+  padding:5rem 4rem;
+  position:relative;
+}
+section+section { border-top:1px solid var(--border); }
+
+.accent-bar {
+  position:absolute; top:0; left:0; right:0; height:2px;
+}
+.bar-amber { background:linear-gradient(90deg, var(--amber), transparent 65%); }
+.bar-green { background:linear-gradient(90deg, var(--green), transparent 65%); }
+.bar-blue  { background:linear-gradient(90deg, var(--blue),  transparent 65%); }
+
+/* ───────────────────────────────────────────────
+   HERO
+─────────────────────────────────────────────── */
+.hero {
+  min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:6rem 4rem;
+  background:
+    radial-gradient(ellipse 80% 55% at 28% 40%, rgba(74,124,89,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 75% at 72% 62%, rgba(201,150,58,0.07) 0%, transparent 55%),
+    var(--bg);
+}
+.hero-eye {
+  font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--amber); margin-bottom:1.75rem;
+  display:flex; align-items:center; gap:0.75rem;
+}
+.hero-eye::before { content:''; display:inline-block; width:2rem; height:1px; background:var(--amber); }
+.hero-h1 {
+  font-family:var(--ff-display);
+  font-size:clamp(2.4rem,4.8vw,4.4rem);
+  font-weight:300; font-style:italic;
+  font-optical-sizing:auto;
+  line-height:1.04;
+  max-width:920px; margin-bottom:1.75rem;
+}
+.hero-h1 em { font-style:normal; color:var(--amber); }
+.hero-sub {
+  font-size:0.97rem; font-weight:300;
+  color:var(--text2); max-width:600px;
+  line-height:1.75; margin-bottom:3.5rem;
+}
+.hero-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--border2);
+  border-radius:8px; overflow:hidden;
+  max-width:720px; margin-bottom:3.5rem;
+}
+.h-stat { background:var(--bg-card); padding:1.5rem 1.75rem; }
+.h-stat:not(:last-child) { border-right:1px solid var(--border2); }
+.h-stat-n {
+  display:block;
+  font-family:var(--ff-display);
+  font-size:2.2rem; font-weight:600;
+  color:var(--amber); line-height:1;
+  margin-bottom:0.45rem;
+}
+.h-stat-l { font-size:0.72rem; color:var(--text2); line-height:1.4; }
+.scroll-cue {
+  display:flex; align-items:center; gap:0.6rem;
+  font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--muted);
+}
+.scroll-line { width:1px; height:2.5rem; background:linear-gradient(to bottom, var(--amber), transparent); }
+
+/* ───────────────────────────────────────────────
+   SECTION HEADER SYSTEM
+─────────────────────────────────────────────── */
+.sec-label {
+  font-size:0.63rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.65rem;
+}
+.sec-title {
+  font-family:var(--ff-display);
+  font-size:clamp(1.9rem,3.2vw,2.9rem);
+  font-weight:300; font-style:italic;
+  font-optical-sizing:auto;
+  line-height:1.1; margin-bottom:1.15rem;
+}
+.sec-lead {
+  font-size:0.95rem; font-weight:300;
+  color:var(--text2); max-width:680px;
+  line-height:1.8; margin-bottom:3rem;
+}
+
+/* ───────────────────────────────────────────────
+   STAT CALLOUTS
+─────────────────────────────────────────────── */
+.stats3 {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--border);
+  border:1px solid var(--border);
+  border-radius:6px; overflow:hidden;
+  margin-bottom:2.75rem;
+}
+.stat-box { background:var(--bg-card); padding:1.75rem; }
+.stat-n {
+  font-family:var(--ff-display);
+  font-size:2.65rem; font-weight:400;
+  line-height:1; margin-bottom:0.45rem;
+}
+.stat-n.c-amber { color:var(--amber); }
+.stat-n.c-green { color:var(--green-l); }
+.stat-n.c-blue  { color:var(--blue-l); }
+.stat-l { font-size:0.78rem; color:var(--text2); line-height:1.5; margin-bottom:0.4rem; }
+.stat-src { font-size:0.63rem; color:var(--muted); }
+
+/* ───────────────────────────────────────────────
+   CHART PANELS
+─────────────────────────────────────────────── */
+.chart-panel {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:8px; padding:2rem;
+  margin-bottom:2rem;
+}
+.chart-title {
+  font-family:var(--ff-display);
+  font-size:1.08rem; font-weight:400; font-style:italic;
+  font-optical-sizing:auto;
+  color:var(--text); margin-bottom:0.3rem;
+}
+.chart-sub {
+  font-size:0.68rem; color:var(--muted);
+  letter-spacing:0.04em; margin-bottom:1.6rem;
+}
+.chart-wrap { position:relative; }
+.chart-insight {
+  margin-top:1.25rem; padding-top:1.25rem;
+  border-top:1px solid var(--border);
+  font-size:0.78rem; color:var(--text2); line-height:1.65;
+}
+.chart-insight strong { color:var(--text); }
+
+/* ───────────────────────────────────────────────
+   GRID HELPERS
+─────────────────────────────────────────────── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+.g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+
+/* ───────────────────────────────────────────────
+   CONTENT CARDS
+─────────────────────────────────────────────── */
+.card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:8px; padding:1.75rem;
+}
+.card-title {
+  font-family:var(--ff-display);
+  font-size:0.95rem; font-weight:600;
+  color:var(--text); margin-bottom:0.7rem;
+}
+.card-body { font-size:0.8rem; color:var(--text2); line-height:1.7; }
+
+/* ───────────────────────────────────────────────
+   INGREDIENTS GRID
+─────────────────────────────────────────────── */
+.ing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+.ing-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-top:2px solid var(--green);
+  border-radius:8px; padding:1.5rem;
+}
+.ing-name {
+  font-family:var(--ff-display);
+  font-size:1.05rem; font-style:italic;
+  color:var(--green-l); margin-bottom:0.3rem;
+}
+.ing-bio {
+  font-size:0.67rem; color:var(--muted);
+  letter-spacing:0.06em; text-transform:uppercase;
+  margin-bottom:0.7rem;
+}
+.ing-desc { font-size:0.77rem; color:var(--text2); line-height:1.65; }
+
+/* ───────────────────────────────────────────────
+   STRATEGY CARDS
+─────────────────────────────────────────────── */
+.strat-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1px; background:var(--border);
+  border:1px solid var(--border);
+  border-radius:8px; overflow:hidden;
+  margin-bottom:2rem;
+}
+.strat-card { background:var(--bg-card); padding:2rem; }
+.strat-n {
+  font-family:var(--ff-display);
+  font-size:3rem; font-weight:300; font-style:italic;
+  color:rgba(201,150,58,0.18); line-height:1;
+  margin-bottom:0.4rem;
+}
+.strat-title {
+  font-family:var(--ff-display);
+  font-size:1.05rem; font-weight:600;
+  color:var(--text); margin-bottom:0.65rem;
+}
+.strat-body { font-size:0.79rem; color:var(--text2); line-height:1.7; }
+
+/* ───────────────────────────────────────────────
+   MARKET CARDS
+─────────────────────────────────────────────── */
+.mkt-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-bottom:2rem; }
+.mkt-card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-left:2px solid var(--amber);
+  border-radius:8px; padding:1.75rem;
+}
+.mkt-name {
+  font-family:var(--ff-display);
+  font-size:1.5rem; font-style:italic; font-weight:600;
+  color:var(--amber-l); margin-bottom:0.35rem;
+}
+.mkt-rationale { font-size:0.78rem; color:var(--text2); line-height:1.65; }
+
+/* ───────────────────────────────────────────────
+   BLOCKQUOTE / PULL QUOTE
+─────────────────────────────────────────────── */
+.pull-quote {
+  font-family:var(--ff-display);
+  font-size:1.45rem; font-style:italic; font-weight:300;
+  font-optical-sizing:auto;
+  line-height:1.45;
+  color:var(--text);
+  padding:1.5rem 1.75rem;
+  border-left:3px solid var(--amber);
+  background:rgba(201,150,58,0.04);
+  border-radius:0 6px 6px 0;
+  margin:1.5rem 0;
+}
+
+/* ───────────────────────────────────────────────
+   MAP ELEMENTS
+─────────────────────────────────────────────── */
+.map-tooltip {
+  position:absolute;
+  background:var(--bg-card2);
+  border:1px solid var(--border2);
+  border-radius:4px; padding:0.45rem 0.7rem;
+  font-size:0.72rem; color:var(--text);
+  pointer-events:none; opacity:0;
+  transition:opacity .12s; z-index:100;
+}
+.map-legend { display:flex; gap:1.5rem; margin-top:1rem; flex-wrap:wrap; }
+.leg-item { display:flex; align-items:center; gap:0.5rem; font-size:0.7rem; color:var(--text2); }
+.leg-dot { width:12px; height:12px; border-radius:2px; flex-shrink:0; }
+
+/* ───────────────────────────────────────────────
+   REVEAL ANIMATIONS
+─────────────────────────────────────────────── */
+.reveal {
+  opacity:0; transform:translateY(18px);
+  transition:opacity .65s ease, transform .65s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+.d1 { transition-delay:.1s; }
+.d2 { transition-delay:.2s; }
+.d3 { transition-delay:.3s; }
+
+/* ───────────────────────────────────────────────
+   FOOTER
+─────────────────────────────────────────────── */
+footer {
+  padding:3rem 4rem;
+  border-top:1px solid var(--border);
+  background:var(--bg2);
+}
+.footnote {
+  font-size:0.68rem; color:var(--muted);
+  line-height:1.75; max-width:820px;
+}
+.foot-meta {
+  display:flex; justify-content:space-between;
+  align-items:flex-end; gap:2rem; margin-top:1.5rem;
+}
+.foot-brand { font-family:var(--ff-display); font-size:0.95rem; font-style:italic; color:var(--muted); }
+.foot-date { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+
+/* ───────────────────────────────────────────────
+   RESPONSIVE
+─────────────────────────────────────────────── */
+@media (max-width:1280px) {
+  :root { --sidebar-w:200px; }
+  section { padding:4rem 3rem; }
+  .ing-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:1024px) {
+  #sidebar { display:none; }
+  main { margin-left:0; }
+  #topnav { display:flex; }
+  section { padding:3.5rem 2rem; }
+  footer { padding:2.5rem 2rem; }
+  .hero { padding:4rem 2rem; min-height:auto; }
+  .hero-stats { grid-template-columns:1fr 1fr; max-width:100%; }
+  .h-stat:nth-child(2) { border-right:none; border-bottom:1px solid var(--border2); }
+  .h-stat:first-child { border-right:1px solid var(--border2); }
+  .stats3 { grid-template-columns:1fr 1fr; }
+  .g2 { grid-template-columns:1fr; }
+  .strat-grid { grid-template-columns:1fr; }
+  .mkt-grid { grid-template-columns:1fr; }
+  .g3 { grid-template-columns:1fr; }
+  .ing-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:640px) {
+  section { padding:3rem 1.25rem; }
+  footer { padding:2rem 1.25rem; }
+  .hero { padding:3rem 1.25rem; }
+  .hero-stats { grid-template-columns:1fr; }
+  .h-stat:not(:last-child) { border-right:none; border-bottom:1px solid var(--border2); }
+  .stats3 { grid-template-columns:1fr; }
+  .ing-grid { grid-template-columns:1fr 1fr; }
+}
+@media print {
+  #sidebar,#topnav,#progress-bar,.grain { display:none !important; }
+  main { margin-left:0; }
+  .reveal { opacity:1; transform:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress-bar"></div>
+<!-- Grain -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ─────────────────────────────
+     SIDEBAR NAVIGATION (desktop)
+───────────────────────────────── -->
+<nav id="sidebar" aria-label="Report navigation">
+  <a href="https://paulestevez.pro" class="back-link" aria-label="Back to paulestevez.pro">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.5 2.5L4 7l4.5 4.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    paulestevez.pro
+  </a>
+  <div class="sb-brand">
+    <span>Category Insights · 2025–2026</span>
+    PhytoLife<br>Consumer Labs
+  </div>
+  <ul class="sb-nav">
+    <li><a href="#s1" class="nav-link active" data-section="s1">01 Executive Summary</a></li>
+    <li><a href="#s2" class="nav-link" data-section="s2">02 Market Sizing</a></li>
+    <li><a href="#s3" class="nav-link" data-section="s3">03 Consumer Behavior</a></li>
+    <li><a href="#s4" class="nav-link" data-section="s4">04 Competitive</a></li>
+    <li><a href="#s5" class="nav-link" data-section="s5">05 Distribution</a></li>
+    <li><a href="#s6" class="nav-link" data-section="s6">06 Formulation</a></li>
+    <li><a href="#s7" class="nav-link" data-section="s7">07 Regulatory</a></li>
+    <li><a href="#s8" class="nav-link" data-section="s8">08 Strategy</a></li>
+  </ul>
+  <div class="sb-foot">Confidential · Investor Use Only</div>
+</nav>
+
+<!-- ─────────────────────────────
+     MOBILE TOP NAV
+───────────────────────────────── -->
+<nav id="topnav" aria-label="Mobile navigation">
+  <a href="https://paulestevez.pro" class="tn-back" aria-label="Back to paulestevez.pro">
+    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.5 2.5L4 7l4.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Home
+  </a>
+  <div class="tn-brand">PhytoLife</div>
+  <a href="#s1" class="tn-link active" data-section="s1">Overview</a>
+  <a href="#s2" class="tn-link" data-section="s2">Market</a>
+  <a href="#s3" class="tn-link" data-section="s3">Consumer</a>
+  <a href="#s4" class="tn-link" data-section="s4">Competitive</a>
+  <a href="#s5" class="tn-link" data-section="s5">Distribution</a>
+  <a href="#s6" class="tn-link" data-section="s6">Formulation</a>
+  <a href="#s7" class="tn-link" data-section="s7">Regulatory</a>
+  <a href="#s8" class="tn-link" data-section="s8">Strategy</a>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════
+     SECTION 1 — EXECUTIVE SUMMARY / HERO
+═══════════════════════════════════════════ -->
+<section id="s1" class="hero">
+  <div class="hero-eye">Category Insights Report &middot; 2025–2026</div>
+
+  <h1 class="hero-h1">
+    The decade of <em>plant-based</em><br>
+    social ritual is beginning now.
+  </h1>
+
+  <p class="hero-sub">
+    A convergence of alcohol displacement, mainstream bioactive adoption,
+    and institutional-grade distribution openings creates a rare first-mover
+    window for premium functional beverage brands positioned where no competitor
+    yet stands: premium hospitality, functional efficacy, occasion-first identity.
+  </p>
+
+  <div class="hero-stats">
+    <div class="h-stat">
+      <span class="h-stat-n">$285B</span>
+      <span class="h-stat-l">Global functional beverage market projected by 2030</span>
+    </div>
+    <div class="h-stat">
+      <span class="h-stat-n">62%</span>
+      <span class="h-stat-l">of US adults reducing or eliminating alcohol consumption in 2024</span>
+    </div>
+    <div class="h-stat">
+      <span class="h-stat-n">27%</span>
+      <span class="h-stat-l">CAGR for cannabinoid beverages 2024–2030 — fastest sub-segment in food &amp; bev</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 2 — MARKET SIZING & GROWTH
+═══════════════════════════════════════════ -->
+<section id="s2">
+  <div class="accent-bar bar-amber"></div>
+
+  <div class="sec-label reveal">Section 02</div>
+  <h2 class="sec-title reveal">Market Sizing &amp; Growth</h2>
+  <p class="sec-lead reveal d1">
+    The functional beverage market sits at the intersection of three high-velocity
+    macro-trends: wellness-first consumption, bioactive science mainstreaming, and a
+    generational pivot away from alcohol. The sub-segments that matter most to
+    PhytoLife — cannabinoids and adaptogens — are growing at 3× the overall category
+    rate, compressing the window for first-mover brand establishment.
+  </p>
+
+  <!-- Stat callouts -->
+  <div class="stats3">
+    <div class="stat-box reveal">
+      <div class="stat-n c-amber">$162B</div>
+      <div class="stat-l">Global functional beverage market baseline, 2024</div>
+      <div class="stat-src">Source: Grand View Research / Mordor Intelligence estimate, 2024</div>
+    </div>
+    <div class="stat-box reveal d1">
+      <div class="stat-n c-amber">~10%</div>
+      <div class="stat-l">Overall category CAGR 2024–2030, vs. 1.8% for conventional soft drinks</div>
+      <div class="stat-src">Source: SPINS / Beverage Industry category benchmarks, 2024</div>
+    </div>
+    <div class="stat-box reveal d2">
+      <div class="stat-n c-amber">$31.4B</div>
+      <div class="stat-l">US no &amp; low-alcohol beverage market by 2030, growing 13% annually</div>
+      <div class="stat-src">Source: IWSR No &amp; Low Report 2024 / NIQ estimates</div>
+    </div>
+  </div>
+
+  <!-- Chart 1: Market growth stacked area -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Global Functional Beverage Market Growth, 2020–2030</div>
+    <div class="chart-sub">Stacked by segment · USD Billions · 2025–2030 projected · Source: Grand View Research, Brightfield Group, SPINS industry estimates</div>
+    <div class="chart-wrap" style="height:400px;">
+      <canvas id="chart-market"></canvas>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> The cannabinoid and nootropic/adaptogen sub-segments are
+      each growing at 20–27% CAGR — roughly three times the pace of the broader category.
+      Category leaders who establish brand equity before the 2027–2028 consolidation wave
+      will own the premium tier for a decade.
+    </div>
+  </div>
+
+  <!-- Chart 5: TAM/SAM/SOM -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Addressable Market Framework — TAM / SAM / SOM</div>
+    <div class="chart-sub">PhytoLife's three-year addressable opportunity · Source: SPINS, NIQ, company modeling</div>
+    <div class="chart-wrap" style="min-height:300px;">
+      <div id="chart-tam"></div>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> A $85M SOM target over three years represents
+      less than 3% of the addressable premium functional beverage SAM — a conservative
+      penetration rate achievable with focused hospitality-first distribution across
+      five to eight priority markets.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 3 — CONSUMER BEHAVIOR
+═══════════════════════════════════════════ -->
+<section id="s3">
+  <div class="accent-bar bar-green"></div>
+
+  <div class="sec-label reveal">Section 03</div>
+  <h2 class="sec-title reveal">Consumer Behavior Shifts</h2>
+  <p class="sec-lead reveal d1">
+    The sober curious movement has matured from a wellness niche into a mainstream
+    behavioral shift across all adult demographics. But the motivations differ sharply
+    by generation — understanding these differences is central to PhytoLife's
+    occasion-based positioning strategy and SKU architecture decisions.
+  </p>
+
+  <div class="stats3">
+    <div class="stat-box reveal">
+      <div class="stat-n c-green">41%</div>
+      <div class="stat-l">of Gen Z adults identify as "sober curious" — highest of any generation</div>
+      <div class="stat-src">Source: IWSR Drinking Occasions Study 2024</div>
+    </div>
+    <div class="stat-box reveal d1">
+      <div class="stat-n c-green">78%</div>
+      <div class="stat-l">of functional beverage purchasers cite stress &amp; mood as primary purchase driver</div>
+      <div class="stat-src">Source: Hartman Group Wellness Consumer Survey 2024</div>
+    </div>
+    <div class="stat-box reveal d2">
+      <div class="stat-n c-green">+340%</div>
+      <div class="stat-l">YoY search growth for "lion's mane" and functional mushroom beverages, 2022–2024</div>
+      <div class="stat-src">Source: Google Trends / Brightfield Group nootropic category report</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <!-- Chart 2: Radar -->
+    <div class="chart-panel reveal">
+      <div class="chart-title">Purchase Driver Index by Generation</div>
+      <div class="chart-sub">Score 0–10 · Primary purchase motivation strength · Source: Hartman Group / IWSR 2024</div>
+      <div class="chart-wrap" style="height:320px;">
+        <canvas id="chart-radar"></canvas>
+      </div>
+      <div class="chart-insight">
+        <strong>PhytoLife insight:</strong> Social ease scores highest for Gen Z while sleep
+        and relaxation dominate Gen X and Millennial. A "calm social" brand narrative
+        captures all three cohorts from a single positioning platform.
+      </div>
+    </div>
+
+    <!-- Chart 7: Occasion index -->
+    <div class="chart-panel reveal d1">
+      <div class="chart-title">Consumption Occasion Index</div>
+      <div class="chart-sub">Indexed penetration × occasion relevance · 100 = maximum · Source: SPINS / Hartman Group occasion study</div>
+      <div class="chart-wrap" style="height:320px;">
+        <canvas id="chart-occasions"></canvas>
+      </div>
+      <div class="chart-insight">
+        <strong>PhytoLife insight:</strong> Social and hospitality occasions (beach/pool,
+        social gathering, dinner party) score highest — validating hospitality-first
+        distribution as the natural channel match to where consumers most want this product.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 4 — COMPETITIVE LANDSCAPE
+═══════════════════════════════════════════ -->
+<section id="s4">
+  <div class="accent-bar bar-amber"></div>
+
+  <div class="sec-label reveal">Section 04</div>
+  <h2 class="sec-title reveal">Competitive Landscape</h2>
+  <p class="sec-lead reveal d1">
+    The functional non-alcoholic category is actively forming but not yet consolidated.
+    A clear premium positioning gap exists between efficacy-led brands and lifestyle
+    brands — and no competitor occupies the premium-functional + hospitality-first
+    distribution quadrant with conviction. That quadrant is PhytoLife's target.
+  </p>
+
+  <div class="stats3">
+    <div class="stat-box reveal">
+      <div class="stat-n c-amber">9</div>
+      <div class="stat-l">Direct category competitors mapped — all primarily DTC, limited hospitality presence</div>
+      <div class="stat-src">Source: Competitive channel analysis Q1 2025 / distributor listings</div>
+    </div>
+    <div class="stat-box reveal d1">
+      <div class="stat-n c-amber">0</div>
+      <div class="stat-l">Competitors with primary launch distribution via premium hotel &amp; private members clubs</div>
+      <div class="stat-src">Source: Competitive positioning analysis, Q1 2025</div>
+    </div>
+    <div class="stat-box reveal d2">
+      <div class="stat-n c-amber">$58M</div>
+      <div class="stat-l">Median Series A/B valuation for functional NA beverage brands, 2023–2024</div>
+      <div class="stat-src">Source: Crunchbase / PitchBook functional beverage deal comps 2023–24</div>
+    </div>
+  </div>
+
+  <!-- Chart 3: Competitive positioning map -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Competitive Positioning Map</div>
+    <div class="chart-sub">Alternative ↔ Mainstream (X-axis) · Lifestyle ↔ Functional (Y-axis) · Bubble size = estimated brand market presence</div>
+    <div class="chart-wrap" style="height:500px;">
+      <canvas id="chart-competitive"></canvas>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> The upper-left quadrant — strongly functional,
+      genuinely alternative — is the least crowded in the entire category.
+      PhytoLife's target position (★) stakes this whitespace with institutional
+      hospitality distribution as the structural moat that competitors cannot easily replicate.
+    </div>
+  </div>
+
+  <!-- Competitor cards -->
+  <div class="g3 reveal">
+    <div class="card">
+      <div class="card-title">Recess &amp; Kin Euphorics</div>
+      <div class="card-body">Strong DTC brand equity. Cannabinoid-forward with lifestyle aesthetics. Limited on-premise presence. Gap: consistent functional efficacy claims and institutional hospitality credibility at scale.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Cann, Ghia &amp; Hopwtr</div>
+      <div class="card-body">Mainstream-leaning social occasion plays. Aesthetics and inclusivity over clinical functional claims. Retail distribution growing; F&B venue placement nascent. Lower brand permission for efficacy messaging.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Aplós, Sunwink &amp; DRAM</div>
+      <div class="card-body">Premium positioning with small footprints. Aplós shows the efficacy-narrative approach works; Sunwink owns the wellness shelf. None has cracked institutional hospitality placement at meaningful scale.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 5 — DISTRIBUTION CHANNELS
+═══════════════════════════════════════════ -->
+<section id="s5">
+  <div class="accent-bar bar-green"></div>
+
+  <div class="sec-label reveal">Section 05</div>
+  <h2 class="sec-title reveal">Channel &amp; Distribution Insights</h2>
+  <p class="sec-lead reveal d1">
+    Distribution sequencing is brand architecture. Where a functional beverage brand
+    is first encountered determines the permanent halo it carries into every subsequent
+    channel. Premium hospitality creates the highest brand equity per dollar spent —
+    and signals quality credibility that no paid media can replicate.
+  </p>
+
+  <div class="stats3">
+    <div class="stat-box reveal">
+      <div class="stat-n c-green">$680B</div>
+      <div class="stat-l">Global premium hospitality F&amp;B spend — the premium brand-building arena</div>
+      <div class="stat-src">Source: Statista Global Hospitality Report 2024</div>
+    </div>
+    <div class="stat-box reveal d1">
+      <div class="stat-n c-green">2.1×</div>
+      <div class="stat-l">LTV multiplier for hospitality channel vs. DTC — same consumer, dramatically lower CAC</div>
+      <div class="stat-src">Source: Category benchmark analysis / DTC–hospitality cohort studies</div>
+    </div>
+    <div class="stat-box reveal d2">
+      <div class="stat-n c-green">12M+</div>
+      <div class="stat-l">Boutique fitness members across US Equinox, SoulCycle, F45, Barry's, Rumble footprint</div>
+      <div class="stat-src">Source: Company public filings / IHRSA fitness data 2024</div>
+    </div>
+  </div>
+
+  <!-- Chart 4: Distribution funnel (D3) -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Brand Equity Build: Distribution Sequencing Logic</div>
+    <div class="chart-sub">Phase-gate model · Brand credibility compounds across channels · Halo transfers downstream</div>
+    <div class="chart-wrap" style="min-height:260px;">
+      <div id="chart-funnel"></div>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> Launching through boutique fitness and premium
+      hospitality replicates the playbook that elevated Illy, Fiji Water, and Seedlip
+      from niche to premium mainstream — the brand is seen in aspirational contexts
+      before it reaches retail, creating shelf-pull rather than shelf-push.
+    </div>
+  </div>
+
+  <!-- Chart 8: Channel economics (bar + line) -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Channel Economics Comparison</div>
+    <div class="chart-sub">CAC &amp; LTV (left axis, USD) · Payback period (right axis, months) · Industry benchmarks, functional beverage category</div>
+    <div class="chart-wrap" style="height:360px;">
+      <canvas id="chart-economics"></canvas>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> Hospitality delivers the highest LTV ($365) at the
+      lowest CAC ($18) — a 20:1 return ratio — with a 2.1-month payback that outperforms
+      every other channel by a factor of two. It is simultaneously the most economical
+      and most brand-generative channel available to an early-stage functional brand.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 6 — FORMULATION & PRODUCT
+═══════════════════════════════════════════ -->
+<section id="s6">
+  <div class="accent-bar bar-green"></div>
+
+  <div class="sec-label reveal">Section 06</div>
+  <h2 class="sec-title reveal">Formulation &amp; Product Trends</h2>
+  <p class="sec-lead reveal d1">
+    The functional beverage formulation race is converging on two non-negotiables:
+    bioavailability and dose reliability. Consumers who experience an inconsistent
+    functional effect stop purchasing and leave the category. The brands that solve
+    the "I feel it every time" problem earn extraordinary loyalty and word-of-mouth velocity.
+  </p>
+
+  <!-- Ingredient cards -->
+  <div class="ing-grid">
+    <div class="ing-card reveal">
+      <div class="ing-name">Ashwagandha</div>
+      <div class="ing-bio">Adaptogen · KSM-66® standardized</div>
+      <div class="ing-desc">Most-researched adaptogen for cortisol modulation. Recognized by 89% of functional beverage consumers. Mainstream trust score 8.4/10. Clinically validated at 300–600mg per serving. RCT evidence base strong.</div>
+    </div>
+    <div class="ing-card reveal d1">
+      <div class="ing-name">L-Theanine</div>
+      <div class="ing-bio">Amino acid · Suntheanine® grade</div>
+      <div class="ing-desc">Alpha-wave promoter delivering calm-without-sedation at 200mg. Synergistic with nano-emulsified CBD for stacked relaxation + clarity effect. 92% consumer perception as "natural." Excellent label clarity.</div>
+    </div>
+    <div class="ing-card reveal d2">
+      <div class="ing-name">Lion's Mane</div>
+      <div class="ing-bio">Nootropic mushroom · Dual-extracted</div>
+      <div class="ing-desc">Fastest-growing functional mushroom category (+340% YoY search). Hericenone content supports NGF production and mental clarity. Celebrity endorsement driving mainstream recognition from fringe to mainstream rapidly.</div>
+    </div>
+    <div class="ing-card reveal d3">
+      <div class="ing-name">Hemp CBD</div>
+      <div class="ing-bio">Cannabinoid · Nano-emulsified</div>
+      <div class="ing-desc">Fast-onset nano-emulsion (15-min onset vs. 2hr for edibles) unlocks beverage format. Water-soluble formulation enables consistent dosing — the category's primary technical moat. Regulatory pathway clarifying 2025–2026.</div>
+    </div>
+  </div>
+
+  <!-- SKU architecture + dual track -->
+  <div class="g2 reveal">
+    <div class="card">
+      <div class="card-title">Hero SKU Logic</div>
+      <div class="card-body">The winning pattern is a single hero SKU — one flavor, one functional profile — that anchors brand identity and accounts for 60–70% of volume. Range extensions (Calm / Focus / Rest) follow only after the hero achieves reorder velocity above 2.4×. SKU proliferation before brand authority is the leading cause of early-stage functional brand failure.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Dual-Track Architecture</div>
+      <div class="card-body">Compliance-first brands operate two parallel product tracks: (1) cannabinoid SKUs for adult-use legal markets via licensed hospitality and specialty retail; (2) non-cannabinoid adaptogen/nootropic SKUs for mass retail, regulated hospitality, and fitness contexts. Neither track cannibalizes the other — together they constitute national distribution at full scale.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 7 — REGULATORY & RISK
+═══════════════════════════════════════════ -->
+<section id="s7">
+  <div class="accent-bar bar-blue"></div>
+
+  <div class="sec-label reveal">Section 07</div>
+  <h2 class="sec-title reveal">Regulatory &amp; Risk Landscape</h2>
+  <p class="sec-lead reveal d1">
+    The regulatory environment for cannabinoid beverages is the category's defining
+    risk factor — and its greatest structural opportunity for compliance-first brands.
+    While regulatory ambiguity limits market access for operators unprepared for
+    complexity, it simultaneously creates a durable moat for those who build
+    compliance infrastructure before the pathway clarifies.
+  </p>
+
+  <div class="stats3">
+    <div class="stat-box reveal">
+      <div class="stat-n c-blue">25</div>
+      <div class="stat-l">US states with adult-use cannabis laws enabling some form of THC beverage retail as of Q1 2025</div>
+      <div class="stat-src">Source: NORML / Cannabis Regulatory Authority Tracker 2025</div>
+    </div>
+    <div class="stat-box reveal d1">
+      <div class="stat-n c-blue">2025–26</div>
+      <div class="stat-l">FDA Farm Bill reauthorization expected to establish hemp-CBD food/bev regulatory pathway</div>
+      <div class="stat-src">Source: FDA Hemp Update / Lobby Group Filings Q4 2024</div>
+    </div>
+    <div class="stat-box reveal d2">
+      <div class="stat-n c-blue">$180B</div>
+      <div class="stat-l">Estimated US market cap unlock if federal hemp-CBD food &amp; beverage pathway clears by 2026</div>
+      <div class="stat-src">Source: Brightfield Group / Cannabis Council market modeling</div>
+    </div>
+  </div>
+
+  <!-- Chart 6: US Regulatory Map (D3) -->
+  <div class="chart-panel reveal">
+    <div class="chart-title">Cannabinoid Beverage Regulatory Status by State</div>
+    <div class="chart-sub">Adult-use THC beverage status · Hemp CBD status · As of Q1 2025 · Source: NORML, state regulatory filings</div>
+    <div class="chart-wrap" style="min-height:380px; position:relative;">
+      <div id="chart-map" style="width:100%; min-height:360px;"></div>
+      <div class="map-tooltip" id="map-tooltip"></div>
+    </div>
+    <div class="map-legend">
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#4A7C59;"></div>
+        Legal — Adult-use THC beverages permitted
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#8B6914;"></div>
+        Limited — Hemp CBD only; THC beverages restricted
+      </div>
+      <div class="leg-item">
+        <div class="leg-dot" style="background:#2A2A2A; border:1px solid #444;"></div>
+        Restricted — Highly regulated or prohibited
+      </div>
+    </div>
+    <div class="chart-insight">
+      <strong>PhytoLife insight:</strong> Phase 1 priority markets — California, Colorado,
+      Illinois, New York — are all fully legal for cannabinoid beverages in licensed venues,
+      representing over 30% of US consumer spending. Florida (Limited status) is accessible
+      via the non-cannabinoid SKU track. Dual-track architecture provides full market coverage
+      regardless of state status.
+    </div>
+  </div>
+
+  <!-- Risk cards -->
+  <div class="g3 reveal">
+    <div class="card" style="border-top:2px solid var(--blue);">
+      <div class="card-title">FDA Pathway Risk</div>
+      <div class="card-body">Hemp CBD in food/beverages lacks a clear federal framework. However, enforcement has been limited since 2018 Farm Bill, and state-level frameworks proliferate. Farm Bill 2025 reauthorization is the primary legislative catalyst for full market unlock.</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--blue);">
+      <div class="card-title">State-Level Variance</div>
+      <div class="card-body">THC beverage legality varies by state, license type, and potency tier. PhytoLife's compliance-first architecture enables pivoting SKU mix by market without brand repositioning — the brand travels; the regulatory complexity does not.</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--blue);">
+      <div class="card-title">Brand Halo Protection</div>
+      <div class="card-body">Non-cannabinoid SKUs carry zero regulatory risk and qualify for conventional food distribution, protecting hospitality and fitness channel relationships from cannabinoid regulatory volatility. The adaptogen track is permanently on-ramp regardless of cannabis policy trajectory.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 8 — STRATEGIC WHITESPACE
+═══════════════════════════════════════════ -->
+<section id="s8">
+  <div class="accent-bar bar-amber"></div>
+
+  <div class="sec-label reveal">Section 08</div>
+  <h2 class="sec-title reveal">Strategic Whitespace &amp; Recommendations</h2>
+  <p class="sec-lead reveal d1">
+    Every data point in this report converges on a single, defensible position
+    that no competitor occupies: the premium social occasion functional beverage
+    for adults who want presence without impairment. Distributed where those
+    occasions happen — the hotel bar, the private members club, the Equinox juice
+    counter. The window is open. The infrastructure is ready.
+  </p>
+
+  <!-- Pull quote -->
+  <div class="pull-quote reveal">
+    "This is not a CBD product. This is not a supplement. This is a social ritual
+    with functional benefits — designed for the on-premise occasion, not the
+    supplement shelf. The occasion owns the brand, not the ingredient."
+  </div>
+
+  <!-- Unoccupied position call-out -->
+  <div class="chart-panel reveal" style="border-top:2px solid var(--amber); margin-bottom:2.5rem;">
+    <div class="chart-title">The Unoccupied Position</div>
+    <p style="font-size:0.85rem; color:var(--text2); line-height:1.75; margin-top:0.75rem;">
+      No functional beverage brand currently occupies the intersection of
+      <strong style="color:var(--text);">genuine functional efficacy</strong>,
+      <strong style="color:var(--text);">premium social occasion identity</strong>, and
+      <strong style="color:var(--text);">hospitality-first distribution</strong>
+      simultaneously. Recess and Kin have the alternative brand equity but not the
+      hospitality distribution or the efficacy credibility. Aplós has the premium
+      hospitality brand permission but limited functional depth. The positioning is
+      structurally vacant. It will not remain vacant past 2026.
+    </p>
+  </div>
+
+  <!-- Three strategic options -->
+  <div class="sec-label reveal" style="margin-bottom:1rem;">Three Strategic Architecture Options</div>
+  <div class="strat-grid reveal">
+    <div class="strat-card">
+      <div class="strat-n">01</div>
+      <div class="strat-title">Singular Brand</div>
+      <div class="strat-body">One brand, one category position. PhytoLife as the premium calm social drink — dual-track SKUs (cannabinoid + adaptogen) under a single brand identity and voice. <strong>Highest brand coherence, highest cultural capital, lowest operational complexity.</strong></div>
+    </div>
+    <div class="strat-card">
+      <div class="strat-n">02</div>
+      <div class="strat-title">House of Occasions</div>
+      <div class="strat-body">PhytoLife as a master brand with occasion-specific sub-lines: CALM (dinner/lounge), FOCUS (morning/fitness), REST (pre-sleep ritual). Captures wider consumer segments at the cost of higher operational complexity. <strong>Optimal if SKU velocity data from Phase 1 confirms distinct purchase occasion splits.</strong></div>
+    </div>
+    <div class="strat-card">
+      <div class="strat-n">03</div>
+      <div class="strat-title">Platform Architecture</div>
+      <div class="strat-body">PhytoLife as a data and formulation platform. Consumer brand at the front; B2B white-label, hospitality private-label, and licensing at the back. <strong>Fastest path to revenue diversification and institutional valuation multiples. Requires Series B capitalization to execute.</strong></div>
+    </div>
+  </div>
+
+  <!-- Priority markets -->
+  <div class="sec-label reveal" style="margin:2.5rem 0 1rem;">Phase 1 Priority Markets</div>
+  <div class="mkt-grid reveal">
+    <div class="mkt-card">
+      <div class="mkt-name">Los Angeles</div>
+      <div class="mkt-rationale">Largest global concentration of wellness and fitness consumers. Cannabis fully legal. Equinox-tier boutique fitness density is unmatched. Hotel and beach club F&B infrastructure supports hospitality-first rollout. Influencer culture creates organic amplification at minimal cost.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-name">Miami</div>
+      <div class="mkt-rationale">Luxury hospitality capital of the East Coast with among the highest hotel F&B spend per guest in the US. Art Basel, Design District, and Brickell create brand-amplification moments. Beach club culture generates daily consumption occasions across a high-HNW demographic.</div>
+    </div>
+    <div class="mkt-card">
+      <div class="mkt-name">Austin</div>
+      <div class="mkt-rationale">Fastest-growing affluent consumer base nationally. Tech and creative class with strong functional product affinity and willingness to pay premium. Less competitive than LA or NYC, enabling faster velocity and reorder development. SXSW creates a built-in annual brand launch amplifier.</div>
+    </div>
+  </div>
+
+  <!-- Partnership targets -->
+  <div class="sec-label reveal" style="margin:0 0 1rem;">Partnership Target Typology</div>
+  <div class="g2 reveal">
+    <div class="card" style="border-top:2px solid var(--amber);">
+      <div class="card-title">Tier 1 — Hotel &amp; Hospitality Groups</div>
+      <div class="card-body">Target: Aman, Edition (Marriott), 1 Hotels, Auberge Resorts, Soho House. These groups curate F&B menus with extreme intentionality — a placement here signals category credibility and reaches ultra-HNW guests who drive social proof. Entry via F&B director relationships, not distributors. First placements should be volume-light but brand-heavy (signature cocktail menu, not minibar).</div>
+    </div>
+    <div class="card" style="border-top:2px solid var(--amber);">
+      <div class="card-title">Tier 2 — Boutique Fitness Concepts</div>
+      <div class="card-body">Target: Equinox (flagship locations), Barry's Bootcamp, Rumble Boxing, P.volve. Fitness consumers have the highest new product adoption rates and premium willingness to pay across any consumer segment. Post-class consumption occasions generate high-frequency trial moments with immediate functional feedback — ideal for converting first-time users to repeat purchasers.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ─────────────────────────────
+     FOOTER
+───────────────────────────────── -->
+<footer>
+  <p class="footnote">
+    <strong>Data Disclosure:</strong> All figures represent category benchmarks, market estimates, and
+    strategic modeling compiled for planning purposes. Sources include NIQ (NielsenIQ), SPINS,
+    Brightfield Group, IWSR (International Wines &amp; Spirits Research), Grand View Research,
+    Mordor Intelligence, Hartman Group, Statista, and industry analyst estimates as of Q1 2025.
+    Market projections reflect consensus modeling and are subject to revision based on regulatory
+    developments, macroeconomic conditions, and category-specific growth trajectories. Competitive
+    intelligence reflects publicly available information and third-party analyst estimates only.
+    This document is prepared for strategic planning and investor discussion purposes only.
+  </p>
+  <div class="foot-meta">
+    <div class="foot-brand">PhytoLife Consumer Labs</div>
+    <div class="foot-date">Category Insights Report · Q2 2025 · Confidential &amp; Proprietary</div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT — All charts, scroll interactions, animations
+═══════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─── PALETTE ─── */
+const P = {
+  green:'#4A7C59', greenL:'#5E9B71',
+  amber:'#C9963A', amberL:'#DEB96A',
+  blue:'#3A5F7D',  blueL:'#5080A0',
+  text:'#F0EDE6',  text2:'#B8B2AB', muted:'#6B6560',
+  grid:'rgba(240,237,230,0.07)',
+  card:'#191919',
+};
+
+/* ─── CHART.JS GLOBAL DEFAULTS ─── */
+Chart.defaults.color = P.muted;
+Chart.defaults.borderColor = P.grid;
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.plugins.tooltip.backgroundColor = '#1C1C1C';
+Chart.defaults.plugins.tooltip.borderColor = 'rgba(240,237,230,0.15)';
+Chart.defaults.plugins.tooltip.borderWidth = 1;
+Chart.defaults.plugins.tooltip.titleColor = P.text;
+Chart.defaults.plugins.tooltip.bodyColor = P.text2;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.cornerRadius = 4;
+Chart.defaults.plugins.legend.labels.color = P.text2;
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+/* ══════════════════════════════════════════
+   CHART 1 — MARKET GROWTH STACKED AREA
+══════════════════════════════════════════ */
+(function() {
+  const years = ['2020','2021','2022','2023','2024','2025','2026','2027','2028','2029','2030'];
+  // Cumulative layers for fill:'-1' stacking (values in $B)
+  const dCore  = [112.7,119.2,127.3,136.8,147.6,159.5,172.5,186.8,201.1,216.5,232.8];
+  const dNoot  = [116.8,124.2,133.5,144.6,157.4,171.8,187.9,205.7,224.2,244.3,266.0];
+  const dTotal = [118.0,126.0,136.0,148.0,162.0,178.0,196.0,216.0,237.0,260.0,285.0];
+
+  const dividerPlugin = {
+    id:'divider',
+    afterDraw(chart){
+      const {ctx,scales,chartArea} = chart;
+      const x = scales.x.getPixelForValue(4); // 2024 index
+      ctx.save();
+      ctx.strokeStyle = 'rgba(240,237,230,0.22)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(240,237,230,0.35)';
+      ctx.font = '10px "DM Sans",sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('Actual', x - 7, chartArea.top + 15);
+      ctx.textAlign = 'left';
+      ctx.fillText('Projected', x + 7, chartArea.top + 15);
+      ctx.restore();
+    }
+  };
+
+  new Chart(document.getElementById('chart-market').getContext('2d'), {
+    type:'line',
+    plugins:[dividerPlugin],
+    data:{
+      labels:years,
+      datasets:[
+        {
+          label:'Core Functional Beverages',
+          data:dCore,
+          borderColor:P.blue, backgroundColor:'rgba(58,95,125,0.42)',
+          borderWidth:1.5, fill:'origin', tension:0.4,
+          pointRadius:0, pointHoverRadius:5,
+        },
+        {
+          label:'Adaptogen / Nootropic Sub-segment',
+          data:dNoot,
+          borderColor:P.green, backgroundColor:'rgba(74,124,89,0.5)',
+          borderWidth:1.5, fill:'-1', tension:0.4,
+          pointRadius:0, pointHoverRadius:5,
+        },
+        {
+          label:'Cannabinoid Sub-segment',
+          data:dTotal,
+          borderColor:P.amber, backgroundColor:'rgba(201,150,58,0.5)',
+          borderWidth:2, fill:'-1', tension:0.4,
+          pointRadius:0, pointHoverRadius:5,
+        },
+      ]
+    },
+    options:{
+      interaction:{mode:'index', intersect:false},
+      scales:{
+        x:{
+          grid:{color:P.grid},
+          ticks:{color:P.muted},
+        },
+        y:{
+          grid:{color:P.grid},
+          ticks:{color:P.muted, callback:v=>'$'+v+'B'},
+          title:{display:true, text:'USD Billions', color:P.muted, font:{size:10}},
+        }
+      },
+      plugins:{
+        legend:{position:'top', align:'start'},
+        tooltip:{
+          callbacks:{
+            label:ctx=>` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(1)}B`
+          }
+        }
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 2 — CONSUMER BEHAVIOR RADAR
+══════════════════════════════════════════ */
+(function() {
+  new Chart(document.getElementById('chart-radar').getContext('2d'), {
+    type:'radar',
+    data:{
+      labels:['Relaxation','Mental Clarity','Energy Boost','Sleep Quality','Social Ease','Performance'],
+      datasets:[
+        {
+          label:'Gen Z',
+          data:[7.8,7.9,7.2,6.5,9.2,6.1],
+          borderColor:P.amber, backgroundColor:'rgba(201,150,58,0.1)',
+          borderWidth:2, pointBackgroundColor:P.amber, pointRadius:4,
+        },
+        {
+          label:'Millennial',
+          data:[8.9,8.4,7.5,8.8,7.6,7.0],
+          borderColor:P.green, backgroundColor:'rgba(74,124,89,0.1)',
+          borderWidth:2, pointBackgroundColor:P.green, pointRadius:4,
+        },
+        {
+          label:'Gen X',
+          data:[9.2,6.8,5.9,9.4,6.1,5.3],
+          borderColor:P.blue, backgroundColor:'rgba(58,95,125,0.1)',
+          borderWidth:2, pointBackgroundColor:P.blue, pointRadius:4,
+        },
+      ]
+    },
+    options:{
+      scales:{
+        r:{
+          min:0, max:10,
+          grid:{color:P.grid},
+          ticks:{color:P.muted, backdropColor:'transparent', stepSize:2},
+          pointLabels:{color:P.text2, font:{size:11}},
+          angleLines:{color:P.grid},
+        }
+      },
+      plugins:{legend:{position:'bottom'}}
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 3 — COMPETITIVE POSITIONING BUBBLE
+══════════════════════════════════════════ */
+(function() {
+  const comps = [
+    {n:'Recess',        x:-1.0, y:3.5,  r:15},
+    {n:'Kin Euphorics', x:-2.5, y:1.5,  r:13},
+    {n:'Cann',          x:1.5,  y:-2.0, r:18},
+    {n:'Ghia',          x:2.5,  y:-3.0, r:11},
+    {n:'Hopwtr',        x:3.0,  y:-0.5, r:10},
+    {n:'Aplós',         x:-1.5, y:2.0,  r:9 },
+    {n:'Parch',         x:0.5,  y:-1.5, r:9 },
+    {n:'Sunwink',       x:-2.0, y:3.0,  r:11},
+    {n:'DRAM',          x:-3.5, y:3.5,  r:8 },
+  ];
+
+  const datasets = comps.map(c=>({
+    label:c.n,
+    data:[{x:c.x, y:c.y, r:c.r}],
+    backgroundColor:'rgba(185,180,175,0.25)',
+    borderColor:'rgba(185,180,175,0.7)',
+    borderWidth:1,
+  }));
+
+  datasets.push({
+    label:'★ PhytoLife (Target Position)',
+    data:[{x:-1.2, y:4.3, r:16}],
+    backgroundColor:'rgba(201,150,58,0.6)',
+    borderColor:P.amberL,
+    borderWidth:2.5,
+  });
+
+  const quadPlugin = {
+    id:'quads',
+    beforeDraw(chart){
+      const {ctx,chartArea,scales} = chart;
+      if (!chartArea) return;
+      const xMid = scales.x.getPixelForValue(0);
+      const yMid = scales.y.getPixelForValue(0);
+      const {left,right,top,bottom} = chartArea;
+      ctx.save();
+      ctx.font = '9px "DM Sans",sans-serif';
+      ctx.fillStyle = 'rgba(240,237,230,0.14)';
+      const ql = [
+        {t:'Alternative + Functional', x:left+10,  y:top+18,    a:'left'},
+        {t:'Mainstream + Functional',  x:right-10, y:top+18,    a:'right'},
+        {t:'Alternative + Lifestyle',  x:left+10,  y:bottom-10, a:'left'},
+        {t:'Mainstream + Lifestyle',   x:right-10, y:bottom-10, a:'right'},
+      ];
+      ql.forEach(q=>{ ctx.textAlign=q.a; ctx.fillText(q.t,q.x,q.y); });
+      ctx.strokeStyle = 'rgba(240,237,230,0.09)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(xMid,top); ctx.lineTo(xMid,bottom); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(left,yMid); ctx.lineTo(right,yMid); ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  new Chart(document.getElementById('chart-competitive').getContext('2d'), {
+    type:'bubble',
+    plugins:[quadPlugin],
+    data:{datasets},
+    options:{
+      scales:{
+        x:{
+          min:-5, max:5,
+          grid:{color:P.grid},
+          ticks:{color:P.muted, callback:v=>v===0?'Center':v<0?'◀ Alternative':'Mainstream ▶'},
+          title:{display:true, text:'Alternative  ←  →  Mainstream', color:P.muted, font:{size:10}},
+        },
+        y:{
+          min:-5, max:5,
+          grid:{color:P.grid},
+          ticks:{color:P.muted, callback:v=>v===0?'Center':v>0?'Functional ▲':'Lifestyle ▼'},
+          title:{display:true, text:'Lifestyle  ←  →  Functional', color:P.muted, font:{size:10}},
+        }
+      },
+      plugins:{
+        legend:{
+          position:'bottom',
+          labels:{
+            filter:item=>['★ PhytoLife (Target Position)','Recess','Cann','Kin Euphorics','Ghia','Aplós'].includes(item.text),
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label:ctx=>{
+              const {x,y,r} = ctx.raw;
+              return ` ${ctx.dataset.label}  (${x>0?'Main':'Alt'} ${Math.abs(x).toFixed(1)}, ${y>0?'Func':'Life'} ${Math.abs(y).toFixed(1)})`;
+            }
+          }
+        }
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 4 — DISTRIBUTION FUNNEL (D3 SVG)
+══════════════════════════════════════════ */
+(function() {
+  const VW = 860, VH = 260;
+  const BW = 162, BH = 128, GAP = 50, SX = 22;
+  const CY = VH / 2;
+
+  const svg = d3.select('#chart-funnel')
+    .append('svg')
+    .attr('viewBox',`0 0 ${VW} ${VH}`)
+    .attr('preserveAspectRatio','xMidYMid meet')
+    .style('width','100%').style('height','auto');
+
+  const stages = [
+    {label:'Boutique Fitness',   sub:'Discovery',       metrics:['12M+ Members','CAC: $14','LTV: $185'], color:P.green,  phase:'Phase 1'},
+    {label:'Premium Hospitality',sub:'Brand Builder',   metrics:['$680B F&B','CAC: $18','LTV: $365'],   color:P.amber,  phase:'Phase 1'},
+    {label:'Lifestyle Retail',   sub:'Conversion',      metrics:['2,400+ Doors','CAC: $8','LTV: $125'], color:P.greenL, phase:'Phase 2'},
+    {label:'Mass Retail',        sub:'Scale',           metrics:['40K+ SKUs','CAC: $6','Natl Scale'],   color:P.blueL,  phase:'Phase 3'},
+  ];
+
+  stages.forEach((s,i)=>{
+    const x = SX + i*(BW+GAP);
+    const y = CY - BH/2;
+    const g = svg.append('g');
+    const del = i * 160;
+
+    g.append('rect')
+      .attr('x',x).attr('y',y).attr('width',BW).attr('height',BH).attr('rx',6)
+      .attr('fill','rgba(22,22,22,0.95)').attr('stroke',s.color).attr('stroke-width',1.5)
+      .style('opacity',0).transition().delay(del).duration(450).style('opacity',1);
+
+    g.append('text')
+      .attr('x',x+9).attr('y',y+14)
+      .attr('fill',s.color).attr('font-size',7.5)
+      .attr('font-family','"DM Sans",sans-serif').attr('letter-spacing','0.1em')
+      .text(s.phase.toUpperCase())
+      .style('opacity',0).transition().delay(del+180).duration(350).style('opacity',1);
+
+    g.append('text')
+      .attr('x',x+BW/2).attr('y',y+38).attr('text-anchor','middle')
+      .attr('fill',P.text).attr('font-size',11.5).attr('font-weight','600')
+      .attr('font-family','"DM Sans",sans-serif')
+      .text(s.label)
+      .style('opacity',0).transition().delay(del+200).duration(350).style('opacity',1);
+
+    g.append('text')
+      .attr('x',x+BW/2).attr('y',y+53).attr('text-anchor','middle')
+      .attr('fill',s.color).attr('font-size',9).attr('font-family','"DM Sans",sans-serif')
+      .text(s.sub)
+      .style('opacity',0).transition().delay(del+230).duration(350).style('opacity',1);
+
+    s.metrics.forEach((m,mi)=>{
+      g.append('text')
+        .attr('x',x+BW/2).attr('y',y+72+mi*17).attr('text-anchor','middle')
+        .attr('fill',P.muted).attr('font-size',9.5).attr('font-family','"DM Sans",sans-serif')
+        .text(m)
+        .style('opacity',0).transition().delay(del+260+mi*40).duration(350).style('opacity',1);
+    });
+
+    // Arrow to next stage
+    if (i < stages.length-1) {
+      const ax = x+BW+4, ax2 = x+BW+GAP-4;
+      svg.append('path')
+        .attr('d',`M${ax},${CY-5} L${ax2-10},${CY-5} L${ax2-10},${CY-11} L${ax2},${CY} L${ax2-10},${CY+11} L${ax2-10},${CY+5} L${ax},${CY+5} Z`)
+        .attr('fill','rgba(201,150,58,0.22)').attr('stroke','rgba(201,150,58,0.45)').attr('stroke-width',0.5)
+        .style('opacity',0).transition().delay(del+400).duration(350).style('opacity',1);
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 5 — TAM / SAM / SOM CIRCLES (D3)
+══════════════════════════════════════════ */
+(function() {
+  const svg = d3.select('#chart-tam')
+    .append('svg')
+    .attr('viewBox','0 0 720 300')
+    .attr('preserveAspectRatio','xMidYMid meet')
+    .style('width','100%').style('height','auto');
+
+  const cx=315, cy=150;
+  const rings = [
+    {id:'TAM', v:'$14.5B', desc:'Total US Functional Non-Alc Opportunity', r:130, color:P.blue,  op:0.18, lx:cx-128, ly:cy-128},
+    {id:'SAM', v:'$2.8B',  desc:'Premium Channels (Hosp + Fitness + Retail)', r:88,  color:P.green, op:0.27, lx:cx-84,  ly:cy-84 },
+    {id:'SOM', v:'$85M',   desc:'3-Year Phase 1 Target',                      r:44,  color:P.amber, op:0.55, lx:null,   ly:null  },
+  ];
+
+  rings.forEach((r,i)=>{
+    svg.append('circle')
+      .attr('cx',cx).attr('cy',cy).attr('r',0)
+      .attr('fill',r.color).attr('fill-opacity',r.op)
+      .attr('stroke',r.color).attr('stroke-width',1.5).attr('stroke-opacity',0.7)
+      .transition().delay(i*220).duration(680).ease(d3.easeCubicOut)
+      .attr('r',r.r);
+
+    if (i < 2) {
+      svg.append('text')
+        .attr('x',r.lx).attr('y',r.ly+12)
+        .attr('fill',r.color).attr('font-size',9).attr('letter-spacing','0.1em')
+        .attr('font-family','"DM Sans",sans-serif').text(r.id)
+        .style('opacity',0).transition().delay(i*220+400).duration(350).style('opacity',1);
+      svg.append('text')
+        .attr('x',r.lx).attr('y',r.ly+26)
+        .attr('fill',P.text).attr('font-size',15).attr('font-weight','700')
+        .attr('font-family','"DM Sans",sans-serif').text(r.v)
+        .style('opacity',0).transition().delay(i*220+440).duration(350).style('opacity',1);
+      svg.append('text')
+        .attr('x',r.lx).attr('y',r.ly+40)
+        .attr('fill',P.muted).attr('font-size',8)
+        .attr('font-family','"DM Sans",sans-serif').text(r.desc)
+        .style('opacity',0).transition().delay(i*220+480).duration(350).style('opacity',1);
+    }
+  });
+
+  // Center SOM label
+  ['SOM','$85M','3-Year Target'].forEach((t,i)=>{
+    svg.append('text')
+      .attr('x',cx).attr('y',[cy-8,cy+10,cy+25][i]).attr('text-anchor','middle')
+      .attr('fill',[P.amber,P.text,P.muted][i])
+      .attr('font-size',[8.5,15,9][i])
+      .attr('font-weight',i===1?'700':'400')
+      .attr('letter-spacing',i===0?'0.1em':'0')
+      .attr('font-family','"DM Sans",sans-serif').text(t)
+      .style('opacity',0).transition().delay(640+i*50).duration(400).style('opacity',1);
+  });
+
+  // Right legend
+  const lx=470;
+  rings.forEach((r,i)=>{
+    const ly=60+i*70;
+    svg.append('circle').attr('cx',lx).attr('cy',ly+6).attr('r',7)
+      .attr('fill',r.color).attr('fill-opacity',0.7)
+      .style('opacity',0).transition().delay(i*220+500).duration(350).style('opacity',1);
+    svg.append('text').attr('x',lx+18).attr('y',ly+5)
+      .attr('fill',r.color).attr('font-size',9.5).attr('letter-spacing','0.08em')
+      .attr('font-family','"DM Sans",sans-serif').text(`${r.id} · ${r.v}`)
+      .style('opacity',0).transition().delay(i*220+530).duration(350).style('opacity',1);
+    svg.append('text').attr('x',lx+18).attr('y',ly+20)
+      .attr('fill',P.muted).attr('font-size',8.5)
+      .attr('font-family','"DM Sans",sans-serif').text(r.desc)
+      .style('opacity',0).transition().delay(i*220+560).duration(350).style('opacity',1);
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 7 — OCCASION CONSUMPTION INDEX
+══════════════════════════════════════════ */
+(function() {
+  const raw = [
+    {l:'Beach / Pool Social',    v:88},
+    {l:'Social Gathering',       v:91},
+    {l:'Post-Workout Recovery',  v:85},
+    {l:'Pre-Sleep Ritual',       v:77},
+    {l:'Dinner Party',           v:72},
+    {l:'Morning Ritual',         v:66},
+    {l:'Private Members Club',   v:63},
+    {l:'Hotel Bar',              v:58},
+    {l:'Work / Networking Event',v:41},
+  ].sort((a,b)=>a.v-b.v);
+
+  new Chart(document.getElementById('chart-occasions').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels:raw.map(r=>r.l),
+      datasets:[{
+        label:'Occasion Index',
+        data:raw.map(r=>r.v),
+        backgroundColor:raw.map(r=>r.v>=80?'rgba(74,124,89,0.7)':r.v>=60?'rgba(201,150,58,0.65)':'rgba(58,95,125,0.65)'),
+        borderColor:raw.map(r=>r.v>=80?P.greenL:r.v>=60?P.amber:P.blue),
+        borderWidth:1.5, borderRadius:3,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      scales:{
+        x:{min:0,max:100, grid:{color:P.grid}, ticks:{color:P.muted}},
+        y:{grid:{display:false}, ticks:{color:P.text2, font:{size:10}}},
+      },
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>` Index: ${ctx.raw} / 100`}}
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 8 — CHANNEL ECONOMICS (mixed bar+line)
+══════════════════════════════════════════ */
+(function() {
+  new Chart(document.getElementById('chart-economics').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels:['DTC / Direct','Hospitality','Boutique Fitness','Lifestyle Retail'],
+      datasets:[
+        {
+          type:'bar', label:'CAC (USD)',
+          data:[42,18,14,8],
+          yAxisID:'y',
+          backgroundColor:'rgba(58,95,125,0.7)', borderColor:P.blue,
+          borderWidth:1.5, borderRadius:4,
+        },
+        {
+          type:'bar', label:'LTV (USD)',
+          data:[290,365,185,125],
+          yAxisID:'y',
+          backgroundColor:'rgba(74,124,89,0.7)', borderColor:P.green,
+          borderWidth:1.5, borderRadius:4,
+        },
+        {
+          type:'line', label:'Payback Period (months)',
+          data:[4.8,2.1,2.6,3.2],
+          yAxisID:'y2',
+          borderColor:P.amber, backgroundColor:'rgba(201,150,58,0.08)',
+          borderWidth:2.5, pointBackgroundColor:P.amber,
+          pointRadius:7, pointHoverRadius:9, tension:0.3,
+        },
+      ]
+    },
+    options:{
+      interaction:{mode:'index', intersect:false},
+      scales:{
+        x:{grid:{display:false}, ticks:{color:P.text2}},
+        y:{
+          position:'left', grid:{color:P.grid},
+          ticks:{color:P.muted, callback:v=>'$'+v},
+          title:{display:true, text:'USD', color:P.muted, font:{size:10}},
+        },
+        y2:{
+          position:'right',
+          grid:{drawOnChartArea:false},
+          min:0, max:8,
+          ticks:{color:P.amberL, callback:v=>v+' mo'},
+          title:{display:true, text:'Payback (months)', color:P.amberL, font:{size:10}},
+        },
+      },
+      plugins:{
+        legend:{position:'top', align:'start'},
+        tooltip:{
+          callbacks:{
+            label:ctx=>ctx.dataset.label==='Payback Period (months)'
+              ? ` Payback: ${ctx.raw} months`
+              : ` ${ctx.dataset.label}: $${ctx.raw}`
+          }
+        }
+      }
+    }
+  });
+})();
+
+/* ══════════════════════════════════════════
+   CHART 6 — US REGULATORY MAP (D3 + TopoJSON)
+══════════════════════════════════════════ */
+async function initMap() {
+  const container = document.getElementById('chart-map');
+  const tooltip   = document.getElementById('map-tooltip');
+
+  /* FIPS → regulatory status: 1=Legal, 2=Limited, 3=Restricted */
+  const status = {
+    '01':2,'02':2,'04':1,'05':2,'06':1,'08':1,'09':1,'10':1,'11':1,
+    '12':2,'13':2,'15':2,'16':3,'17':1,'18':2,'19':2,'20':3,'21':2,
+    '22':2,'23':1,'24':1,'25':1,'26':1,'27':1,'28':2,'29':1,'30':1,
+    '31':2,'32':1,'33':1,'34':1,'35':1,'36':1,'37':2,'38':2,'39':1,
+    '40':2,'41':1,'42':2,'44':1,'45':2,'46':3,'47':2,'48':2,'49':2,
+    '50':1,'51':1,'53':1,'54':2,'55':2,'56':3,
+  };
+  const names = {
+    '01':'Alabama','02':'Alaska','04':'Arizona','05':'Arkansas','06':'California',
+    '08':'Colorado','09':'Connecticut','10':'Delaware','11':'D.C.','12':'Florida',
+    '13':'Georgia','15':'Hawaii','16':'Idaho','17':'Illinois','18':'Indiana',
+    '19':'Iowa','20':'Kansas','21':'Kentucky','22':'Louisiana','23':'Maine',
+    '24':'Maryland','25':'Massachusetts','26':'Michigan','27':'Minnesota',
+    '28':'Mississippi','29':'Missouri','30':'Montana','31':'Nebraska','32':'Nevada',
+    '33':'New Hampshire','34':'New Jersey','35':'New Mexico','36':'New York',
+    '37':'North Carolina','38':'North Dakota','39':'Ohio','40':'Oklahoma',
+    '41':'Oregon','42':'Pennsylvania','44':'Rhode Island','45':'South Carolina',
+    '46':'South Dakota','47':'Tennessee','48':'Texas','49':'Utah','50':'Vermont',
+    '51':'Virginia','53':'Washington','54':'West Virginia','55':'Wisconsin','56':'Wyoming',
+  };
+  const colors = {'1':'#4A7C59','2':'#7A5910','3':'#242424'};
+  const labels = {'1':'Adult-Use THC Beverages Legal','2':'Hemp CBD Only — THC Restricted','3':'Restricted / Prohibited'};
+
+  const svg = d3.select('#chart-map')
+    .append('svg')
+    .attr('id','map-svg')
+    .attr('viewBox','0 0 960 560')
+    .attr('preserveAspectRatio','xMidYMid meet')
+    .style('width','100%').style('height','auto');
+
+  try {
+    const us     = await d3.json('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json');
+    const states = topojson.feature(us, us.objects.states);
+
+    const proj = d3.geoIdentity().fitSize([960,560], states);
+    const path = d3.geoPath().projection(proj);
+
+    svg.selectAll('path')
+      .data(states.features)
+      .join('path')
+      .attr('d', path)
+      .attr('fill', d => {
+        const fips = String(d.id).padStart(2,'0');
+        return colors[status[fips] || 2] || colors[2];
+      })
+      .attr('stroke','rgba(240,237,230,0.13)')
+      .attr('stroke-width',0.6)
+      .style('cursor','pointer')
+      .on('mouseover', function(event, d) {
+        const fips = String(d.id).padStart(2,'0');
+        const s = status[fips] || 2;
+        d3.select(this).attr('stroke-width',2).attr('stroke','rgba(240,237,230,0.55)');
+        tooltip.style.opacity='1';
+        tooltip.innerHTML=`<strong>${names[fips]||'Unknown'}</strong><br>${labels[s]}`;
+      })
+      .on('mousemove', function(event) {
+        const rect = container.getBoundingClientRect();
+        tooltip.style.left=(event.clientX-rect.left+12)+'px';
+        tooltip.style.top=(event.clientY-rect.top-36)+'px';
+      })
+      .on('mouseout', function() {
+        d3.select(this).attr('stroke-width',0.6).attr('stroke','rgba(240,237,230,0.13)');
+        tooltip.style.opacity='0';
+      });
+
+    // State border mesh for crispness
+    svg.append('path')
+      .datum(topojson.mesh(us, us.objects.states, (a,b)=>a!==b))
+      .attr('d', path)
+      .attr('fill','none')
+      .attr('stroke','rgba(240,237,230,0.1)')
+      .attr('stroke-width',0.4);
+
+  } catch(e) {
+    svg.append('text')
+      .attr('x',480).attr('y',280).attr('text-anchor','middle')
+      .attr('fill',P.muted).attr('font-size',14).attr('font-family','"DM Sans",sans-serif')
+      .text('Map requires internet connection · Reload to display geographic data');
+  }
+}
+initMap();
+
+/* ══════════════════════════════════════════
+   SCROLL PROGRESS BAR
+══════════════════════════════════════════ */
+(function() {
+  const bar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', ()=>{
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    bar.style.width = (pct * 100).toFixed(1) + '%';
+  }, {passive:true});
+})();
+
+/* ══════════════════════════════════════════
+   SCROLL SPY (highlights active nav link)
+══════════════════════════════════════════ */
+(function() {
+  const sections = document.querySelectorAll('section[id]');
+  const links    = document.querySelectorAll('[data-section]');
+
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting) {
+        links.forEach(l=>l.classList.toggle('active', l.dataset.section===e.target.id));
+      }
+    });
+  }, {rootMargin:'-15% 0px -75% 0px'});
+
+  sections.forEach(s=>obs.observe(s));
+})();
+
+/* ══════════════════════════════════════════
+   REVEAL ON SCROLL (IntersectionObserver)
+══════════════════════════════════════════ */
+(function() {
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.07, rootMargin:'0px 0px -40px 0px'});
+
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
+</script>
+</body>
+</html>
